@@ -37,6 +37,6 @@ void Logger::clear_buffer() {
 void Logger::create_overflow_message() {
     uint16_t tmp = logger_buffer_index;
     clear_buffer();
-    add_to_buffer("Logger buffer overflowed by " + String(tmp + 1 - LOGGER_BUFFER_SIZE) + " characters");
+    err("Logger buffer overflowed by " + String(tmp + 1 - LOGGER_BUFFER_SIZE) + " characters");
     finish_buffer();
 };

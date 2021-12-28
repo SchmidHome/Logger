@@ -74,7 +74,7 @@ void test_exact_overflow(void) {
     TEST_ASSERT_EQUAL_STRING("this is a 51char string which will cause overflo\n", logger_buffer);
 
     deflogger.create_overflow_message();
-    TEST_ASSERT_EQUAL_STRING("Logger buffer overflowed by 1 characters\n", logger_buffer);
+    TEST_ASSERT_EQUAL_STRING("ERR: Logger buffer overflowed by 1 characters\n", logger_buffer);
 
     deflogger.clear_buffer();
     TEST_ASSERT_EQUAL(0, logger_buffer_index);

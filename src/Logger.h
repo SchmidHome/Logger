@@ -22,8 +22,8 @@ extern uint16_t logger_buffer_index;
 class Logger {
    public:
     virtual void msg(String message) { add_to_buffer(message); };
-    virtual void warn(String message) { add_to_buffer(message); };
-    virtual void err(String message) { add_to_buffer(message); };
+    virtual void warn(String message) { add_to_buffer("WARN: " + message); };
+    virtual void err(String message) { add_to_buffer("ERR: " + message); };
 
    protected:
     void add_to_buffer(String message);
