@@ -1,0 +1,17 @@
+{
+    "name": "Logger",
+    "version": "1.0.0",
+    "description": "logger for arduino",
+    "keywords": "assistance, logger",
+    "authors": {
+        "name": "Johannes Schmid"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SchmidHome/Logger.git"
+    },
+    "dependencies": [],
+    "license": "MIT",
+    "frameworks": "Arduino",
+    "platforms": "*"
+}
