@@ -1,4 +1,6 @@
+#ifndef UNIT_TEST
 #define UNIT_TEST  // needed for intellisense to work
+#endif
 
 #include <Arduino.h>
 #include <Logger.h>
