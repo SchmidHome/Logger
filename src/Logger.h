@@ -27,10 +27,9 @@ class Logger {
 
    protected:
     void add_to_buffer(String message);
-    void finish_buffer();
     void clear_buffer();
     void create_overflow_message();
-    inline bool buffer_full() { return logger_buffer_index + 1 >= LOGGER_BUFFER_SIZE; };
+    inline bool buffer_full() { return logger_buffer_index >= LOGGER_BUFFER_SIZE; };
     inline bool buffer_empty() { return logger_buffer_index == 0; };
 #ifdef UNIT_TEST
     friend void test_size_0(void);

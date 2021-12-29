@@ -25,14 +25,42 @@ used to print errors using the default logger
 change *Communication* to own communication method
 ```c++
 if (!buffer_empty() && Communication.available()) { // check if new message and connection are available
-        finish_buffer();                                // finish buffer with \n and \0 at end
-        Communication.print(logger_buffer);             // print logged messages
-        if (buffer_full()) {                            // check if buffer had overflow
-            create_overflow_message();                      // create overflow message 
-            Communication.print(logger_buffer);             // print overflow message
-        }
-        clear_buffer();                                 // clear buffer as all content is sent
-    }
+    Communication.print(logger_buffer);             //   print logged messages
+    if (buffer_full()) {                            //   check if buffer had overflow
+        create_overflow_message();                  //     clear buffer and create overflow message 
+        Communication.print(logger_buffer);         //     print overflow message
+    }                                               //
+    clear_buffer();                                 //   clear buffer as all content is sent
+}
+```
+In Case the communication print function can fail use:
+```c++
+if (!buffer_empty() && Communication.available()) { // check if new message and connection are available
+    if (Communication.print(logger_buffer)) {       //   print logged messages, continue on success
+        if (buffer_full()) {                        //     check if buffer had overflow
+            create_overflow_message();              //       clear buffer and create overflow message 
+            if (Communication.print(logger_buffer)) //       print overflow message, continue on success
+                clear_buffer();                     //         clear buffer as overflow message is sent    
+            else                                    //  
+                WARN("Communication failed")        //         warn that communication failed
+        } else                                      //  
+            clear_buffer();                         //       clear buffer as all content is sent
+    } else                                          //  
+        WARN("Communication failed")                //     warn that communication failed
+}
+```
+If it is enougth for the next loop to send the overflow message, you can also use this:
+```c++
+if (!buffer_empty() && Communication.available()) { // check if new message and connection are available
+    if (Communication.print(logger_buffer))         //   print logged messages, continue on success
+        if (buffer_full())                          //     check if buffer had overflow
+            create_overflow_message();              //       clear buffer and create overflow message
+                                                    //       message will be sent on the next call of this function
+        else                                        // 
+            clear_buffer();                         //       clear buffer as all content is sent
+    else                                            //    
+        WARN("Communication failed")                //     warn that communication failed
+}
 ```
 
 ## change buffer size
