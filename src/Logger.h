@@ -1,20 +1,26 @@
 #pragma once
 
+#include <Arduino.h>
+
 #ifndef LOGGER_BUFFER_SIZE
 #define LOGGER_BUFFER_SIZE 512
 #endif
 
+
+// if condition is false, *ERR: <filename> at <line>: <message>* will be logged (deflogger.err is used)
 #define ASSERT_ERR(condition, message) \
     if (!(condition)) deflogger.err(__BASE_FILE__ + (String) " at " + __LINE__ + ": " + message)
+
+// if condition is false, *WARN: <filename> at <line>: <message>* will be logged and *execute* will be executed (deflogger.warn is used)
 #define ASSERT_WARN(condition, message, execute)                                     \
     if (!(condition)) {                                                              \
         deflogger.warn(__BASE_FILE__ + (String) " at " + __LINE__ + ": " + message); \
         execute;                                                                     \
     }
 
-#define MSG(message) deflogger.msg(message)
-#define WARN(message) deflogger.warn(message)
-#define ERR(message) deflogger.err(message)
+#define MSG(message) deflogger.msg(message)    // print messages using the default logger
+#define WARN(message) deflogger.warn(message)  // print warnings using the default logger
+#define ERR(message) deflogger.err(message)    // print errors using the default logger
 
 extern char logger_buffer[LOGGER_BUFFER_SIZE];
 extern uint16_t logger_buffer_index;

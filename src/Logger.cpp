@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <Logger.h>
 
 Logger _DefaultLogger;
