@@ -6,6 +6,7 @@
 #define LOGGER_BUFFER_SIZE 512
 #endif
 
+#define FLAG_TO_STRING(s) #s
 
 // if condition is false, *ERR: <filename> at <line>: <message>* will be logged (deflogger.err is used)
 #define ASSERT_ERR(condition, message) \
