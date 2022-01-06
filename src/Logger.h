@@ -6,7 +6,8 @@
 #define LOGGER_BUFFER_SIZE 512
 #endif
 
-#define FLAG_TO_STRING(s) #s
+#define _FLAG_TO_STRING(...) #__VA_ARGS__
+#define FLAG_TO_STRING(a) _FLAG_TO_STRING(a)
 
 // if condition is false, *ERR: <filename> at <line>: <message>* will be logged (deflogger->err is used)
 #define ASSERT_ERR(condition, message) \
