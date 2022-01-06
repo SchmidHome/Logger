@@ -1,12 +1,54 @@
 #include <Logger.h>
 
-Logger _DefaultLogger;
-Logger &deflogger = _DefaultLogger;
+Logger _DefaultLogger(true);
+Logger *deflogger = &_DefaultLogger;
 
-char logger_buffer[LOGGER_BUFFER_SIZE];
-uint16_t logger_buffer_index = 0;
+char deflogger_buffer[LOGGER_BUFFER_SIZE];
 
 // -------------------------------------------------------------------------------- Logger
+Logger::Logger(bool set_as_default) : logger_buffer(nullptr), logger_buffer_index(0) {
+    if (set_as_default) {
+        logger_buffer = deflogger_buffer;
+        if (&_DefaultLogger == this)
+            return;
+        Serial.println("Logger::Logger(bool set_as_default) A");
+        logger_buffer_index = deflogger->logger_buffer_index;
+        if (deflogger == &_DefaultLogger) {
+            // unassign _DefaultLogger
+            deflogger->logger_buffer = new char[1];
+        } else {
+            // unassign other logger
+            deflogger->logger_buffer = new char[LOGGER_BUFFER_SIZE];
+        }
+        deflogger->logger_buffer_index = 0;
+        deflogger = this; 
+    } else {
+        logger_buffer = new char[LOGGER_BUFFER_SIZE];
+        logger_buffer_index = 0;
+    }
+}
+
+Logger::~Logger() {
+    if (deflogger != this) {
+        delete[] logger_buffer;
+    } else if (&_DefaultLogger != this) {
+        // reassign _DefaultLogger
+        delete[] _DefaultLogger.logger_buffer;
+        _DefaultLogger.logger_buffer = logger_buffer;
+        _DefaultLogger.logger_buffer_index = logger_buffer_index;
+        deflogger = &_DefaultLogger;
+    }
+}
+
+void Logger::unassign() {
+    if (&_DefaultLogger == this)
+        logger_buffer = new char[1];
+    else
+        logger_buffer = new char[LOGGER_BUFFER_SIZE];
+
+    logger_buffer_index = 0;
+}
+
 void Logger::add_to_buffer(String message) {
     if (logger_buffer_index + 1 < LOGGER_BUFFER_SIZE) {
         // copy message to buffer

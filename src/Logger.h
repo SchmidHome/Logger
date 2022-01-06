@@ -8,23 +8,20 @@
 
 #define FLAG_TO_STRING(s) #s
 
-// if condition is false, *ERR: <filename> at <line>: <message>* will be logged (deflogger.err is used)
+// if condition is false, *ERR: <filename> at <line>: <message>* will be logged (deflogger->err is used)
 #define ASSERT_ERR(condition, message) \
-    if (!(condition)) deflogger.err(__BASE_FILE__ + (String) " at " + __LINE__ + ": " + message)
+    if (!(condition)) deflogger->err(__BASE_FILE__ + (String) " at " + __LINE__ + ": " + message)
 
-// if condition is false, *WARN: <filename> at <line>: <message>* will be logged and *execute* will be executed (deflogger.warn is used)
-#define ASSERT_WARN(condition, message, execute)                                     \
-    if (!(condition)) {                                                              \
-        deflogger.warn(__BASE_FILE__ + (String) " at " + __LINE__ + ": " + message); \
-        execute;                                                                     \
+// if condition is false, *WARN: <filename> at <line>: <message>* will be logged and *execute* will be executed (deflogger->warn is used)
+#define ASSERT_WARN(condition, message, execute)                                      \
+    if (!(condition)) {                                                               \
+        deflogger->warn(__BASE_FILE__ + (String) " at " + __LINE__ + ": " + message); \
+        execute;                                                                      \
     }
 
-#define MSG(message) deflogger.msg(message)    // print messages using the default logger
-#define WARN(message) deflogger.warn(message)  // print warnings using the default logger
-#define ERR(message) deflogger.err(message)    // print errors using the default logger
-
-extern char logger_buffer[LOGGER_BUFFER_SIZE];
-extern uint16_t logger_buffer_index;
+#define MSG(message) deflogger->msg(message)    // print messages using the default logger
+#define WARN(message) deflogger->warn(message)  // print warnings using the default logger
+#define ERR(message) deflogger->err(message)    // print errors using the default logger
 
 class Logger {
    public:
@@ -32,7 +29,15 @@ class Logger {
     virtual void warn(String message) { add_to_buffer("WARN: " + message); };
     virtual void err(String message) { add_to_buffer("ERR: " + message); };
 
+    Logger(bool set_as_default);
+    virtual ~Logger();
+
    protected:
+    char* logger_buffer;
+    uint16_t logger_buffer_index;
+
+    void unassign();
+
     void add_to_buffer(String message);
     void clear_buffer();
     void create_overflow_message();
@@ -45,8 +50,10 @@ class Logger {
     friend void test_send_msg(void);
     friend void test_no_overflow(void);
     friend void test_exact_overflow(void);
+    friend void test_use_two_logger(void);
+    friend void test_set_other_to_default(void);
     friend void process();
 #endif
 };
 
-extern Logger &deflogger;  // default logger
+extern Logger* deflogger;  // default logger
